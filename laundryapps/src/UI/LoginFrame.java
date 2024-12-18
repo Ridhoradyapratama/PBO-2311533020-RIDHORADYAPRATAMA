@@ -1,5 +1,6 @@
 package UI;
 
+import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -45,55 +46,51 @@ public class LoginFrame extends JFrame {
 	 */
 	public LoginFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 878, 653);
+		setBounds(100, 100, 720, 547);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("Laundry Apps");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
-		lblNewLabel.setBounds(31, 25, 158, 39);
+		JLabel lblNewLabel = new JLabel("Login Form");
+		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 22));
+		lblNewLabel.setBounds(241, 36, 339, 57);
 		contentPane.add(lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("Males aja nyuci,Biar kami cuciin");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_1.setBounds(31, 62, 327, 24);
-		contentPane.add(lblNewLabel_1);
-		
 		JLabel lblNewLabel_2 = new JLabel("Username");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_2.setBounds(59, 122, 130, 24);
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblNewLabel_2.setBounds(169, 130, 126, 19);
 		contentPane.add(lblNewLabel_2);
 		
 		txtUsername = new JTextField();
-		txtUsername.setBounds(59, 156, 318, 39);
+		txtUsername.setBounds(169, 157, 289, 48);
 		contentPane.add(txtUsername);
 		txtUsername.setColumns(10);
 		
-		txtPassword = new JTextField();
-		txtPassword.setColumns(10);
-		txtPassword.setBounds(59, 267, 318, 39);
-		contentPane.add(txtPassword);
-		
 		JLabel lblNewLabel_3 = new JLabel("Password");
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_3.setBounds(59, 230, 86, 30);
+		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblNewLabel_3.setBounds(169, 223, 87, 14);
 		contentPane.add(lblNewLabel_3);
+		
+		txtPassword = new JTextField();
+		txtPassword.setBounds(169, 247, 289, 48);
+		contentPane.add(txtPassword);
+		txtPassword.setColumns(10);
 		
 		JButton btnLogin = new JButton("Login");
 		btnLogin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(User.login(txtUsername.getText(), txtPassword.getText())){
-					new MainFrame().setVisible(true);
-					dispose();
-				}else {
-					JOptionPane.showMessageDialog(null,"Login Gagal");
-				}
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        if(User.login(txtUsername.getText(), txtPassword.getText())) {
+		            new MainFrame().setVisible(true);  // Corrected set.Visible to setVisible
+		            dispose();  // Dispose of the current frame
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Login Gagal");  // Corrected showMassageDialog to showMessageDialog
+		        }
+		    }
 		});
-		btnLogin.setBounds(59, 348, 318, 39);
+		btnLogin.setFont(new Font("Tahoma", Font.BOLD, 15));
+		btnLogin.setBounds(169, 332, 289, 38);
 		contentPane.add(btnLogin);
 	}
 }
