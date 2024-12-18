@@ -18,7 +18,8 @@ import java.awt.event.MouseEvent;
 
 import DAO.CostumerRepo;
 import model.Costumer;
-import table.TableCostumer;
+import model.CostumerBuilder;
+import table.TabelCostumer;
 
 public class CostumerFrame extends JFrame {
 
@@ -26,11 +27,14 @@ public class CostumerFrame extends JFrame {
     private JPanel contentPane;
     private JTextField txtNama;
     private JTextField txtAlamat;
-    private JTextField txtNomorHp;
+    private JTextField txtNoHp;
     private JTable table;
-    private CostumerRepo custRepo;
-    private String selectedId = null; 
+    private CostumerRepo costumerRepo;
+    private String selectedId = null;
 
+    /**
+     * Launch the application.
+     */
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -44,22 +48,31 @@ public class CostumerFrame extends JFrame {
         });
     }
 
+    /**
+     * Reset the input fields
+     */
     public void reset() {
         txtNama.setText("");
         txtAlamat.setText("");
-        txtNomorHp.setText("");
+        txtNoHp.setText("");
         selectedId = null;
     }
 
+    /**
+     * Load data from the database into the table
+     */
     public void loadTable() {
-        List<Costumer> ls = custRepo.show();
-        TableCostumer model = new TableCostumer(ls);
+        List<Costumer> ls = costumerRepo.show();
+        TabelCostumer model = new TabelCostumer(ls);
         table.setModel(model);
     }
 
+    /**
+     * Create the frame.
+     */
     public CostumerFrame() {
-        custRepo = new CostumerRepo();
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        costumerRepo = new CostumerRepo();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setBounds(100, 100, 500, 500);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -85,24 +98,25 @@ public class CostumerFrame extends JFrame {
         contentPane.add(txtAlamat);
         txtAlamat.setColumns(10);
 
-        JLabel lblNomorHp = new JLabel("Nomor HP");
-        lblNomorHp.setBounds(10, 100, 80, 25);
-        contentPane.add(lblNomorHp);
+        JLabel lblNoHp = new JLabel("No HP");
+        lblNoHp.setBounds(10, 100, 80, 25);
+        contentPane.add(lblNoHp);
 
-        txtNomorHp = new JTextField();
-        txtNomorHp.setBounds(100, 100, 200, 25);
-        contentPane.add(txtNomorHp);
-        txtNomorHp.setColumns(10);
+        txtNoHp = new JTextField();
+        txtNoHp.setBounds(100, 100, 200, 25);
+        contentPane.add(txtNoHp);
+        txtNoHp.setColumns(10);
 
         JButton btnSave = new JButton("Save");
         btnSave.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (validateInput()) {
-                    Costumer cust = new Costumer();
-                    cust.setNama(txtNama.getText());
-                    cust.setAlamat(txtAlamat.getText());
-                    cust.setNomorHp(txtNomorHp.getText());
-                    custRepo.save(cust);
+                	Costumer costumer = new CostumerBuilder()
+    						.setNama(txtNama.getText())
+    						.setAlamat(txtAlamat.getText())
+    						.setNohp(txtNoHp.getText())
+    						.build();
+                    costumerRepo.save(costumer);
                     reset();
                     loadTable();
                     JOptionPane.showMessageDialog(null, "Costumer saved successfully!");
@@ -116,12 +130,13 @@ public class CostumerFrame extends JFrame {
         btnUpdate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedId != null && validateInput()) {
-                    Costumer cust = new Costumer();
-                    cust.setId(selectedId);
-                    cust.setNama(txtNama.getText());
-                    cust.setAlamat(txtAlamat.getText());
-                    cust.setNomorHp(txtNomorHp.getText());
-                    custRepo.update(cust);
+                	Costumer costumer = new CostumerBuilder()
+							.setNama(txtNama.getText())
+							.setAlamat(txtAlamat.getText())
+							.setNohp(txtNoHp.getText())
+							.setId(selectedId)
+							.build();
+                    costumerRepo.update(costumer);
                     reset();
                     loadTable();
                     JOptionPane.showMessageDialog(null, "Costumer updated successfully!");
@@ -137,7 +152,7 @@ public class CostumerFrame extends JFrame {
         btnDelete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (selectedId != null) {
-                    custRepo.delete(selectedId); 
+                    costumerRepo.delete(Integer.parseInt(selectedId));
                     reset();
                     loadTable();
                     JOptionPane.showMessageDialog(null, "Costumer deleted successfully!");
@@ -158,26 +173,34 @@ public class CostumerFrame extends JFrame {
         btnCancel.setBounds(320, 150, 80, 30);
         contentPane.add(btnCancel);
 
+        JPanel panel = new JPanel();
+        panel.setBounds(10, 200, 460, 250);
+        contentPane.add(panel);
+        panel.setLayout(null);
+
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 200, 460, 250);
-        contentPane.add(scrollPane);
+        scrollPane.setBounds(0, 0, 460, 250);
+        panel.add(scrollPane);
 
         table = new JTable();
         scrollPane.setViewportView(table);
-        
+
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int row = table.getSelectedRow();
                 selectedId = table.getModel().getValueAt(row, 0).toString();
                 txtNama.setText(table.getModel().getValueAt(row, 1).toString());
                 txtAlamat.setText(table.getModel().getValueAt(row, 2).toString());
-                txtNomorHp.setText(table.getModel().getValueAt(row, 3).toString());
+                txtNoHp.setText(table.getModel().getValueAt(row, 3).toString());
             }
         });
 
         loadTable();
     }
 
+    /**
+     * Validate user input
+     */
     private boolean validateInput() {
         if (txtNama.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Nama cannot be empty!");
@@ -187,10 +210,10 @@ public class CostumerFrame extends JFrame {
             JOptionPane.showMessageDialog(null, "Alamat cannot be empty!");
             return false;
         }
-        if (txtNomorHp.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Nomor HP cannot be empty!");
+        if (txtNoHp.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No HP cannot be empty!");
             return false;
         }
-        return true;
-    }
+        return true;
+    }
 }

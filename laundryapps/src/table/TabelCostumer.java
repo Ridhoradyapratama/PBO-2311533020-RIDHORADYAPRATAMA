@@ -2,13 +2,13 @@ package table;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
-import model.Costumer; 
+import model.Costumer;
 
-public class TableCostumer extends AbstractTableModel {
+public class TabelCostumer extends AbstractTableModel {
     private List<Costumer> list;
     private final String[] columns = {"ID", "Nama", "Alamat", "Nomor HP"};
 
-    public TableCostumer(List<Costumer> list) {
+    public TabelCostumer(List<Costumer> list) {
         this.list = list;
     }
 
@@ -29,7 +29,7 @@ public class TableCostumer extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Costumer costumer = list.get(rowIndex); 
+        Costumer costumer = list.get(rowIndex);
         switch (columnIndex) {
             case 0:
                 return costumer.getId();
@@ -38,7 +38,7 @@ public class TableCostumer extends AbstractTableModel {
             case 2:
                 return costumer.getAlamat();
             case 3:
-                return costumer.getNomorHp();
+                return costumer.getNohp();
             default:
                 return null;
         }
@@ -46,6 +46,12 @@ public class TableCostumer extends AbstractTableModel {
 
     public void setList(List<Costumer> list) {
         this.list = list;
-        fireTableDataChanged(); 
+        fireTableDataChanged();
     }
+    
+    public Costumer getCostumerAt(int rowIndex) {
+
+        return list.get(rowIndex);
+
+    }
 }

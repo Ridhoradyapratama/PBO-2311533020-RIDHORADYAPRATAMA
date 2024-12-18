@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 
 import confg.Database;
 import model.Costumer;
+import model.CostumerBuilder;
 
 public class CostumerRepo implements CostumerDAO {
     private Connection connection;
@@ -19,20 +20,20 @@ public class CostumerRepo implements CostumerDAO {
     public CostumerRepo() {
         this.connection = Database.getConnection();
         if (this.connection == null) {
-            throw new IllegalStateException("Koneksi gagal! Periksa konfigurasi database.");
+            System.out.println("Koneksi gagal! Periksa konfigurasi database.");
         }
     }
 
     @Override
     public void save(Costumer costumer) {
-        String insert = "INSERT INTO costumer (nama, alamat, nomorHp) VALUES (?, ?, ?)";
+        String insert = "INSERT INTO costumer (nama, alamat, noHp) VALUES (?, ?, ?)";
         try (PreparedStatement st = connection.prepareStatement(insert)) {
             st.setString(1, costumer.getNama());
             st.setString(2, costumer.getAlamat());
-            st.setString(3, costumer.getNomorHp());
+            st.setString(3, costumer.getNohp());
             st.executeUpdate();
         } catch (SQLException e) {
-            Logger.getLogger(CostumerRepo.class.getName()).log(Level.SEVERE, "Error inserting costumer", e);
+            e.printStackTrace();
         }
     }
 
@@ -43,30 +44,31 @@ public class CostumerRepo implements CostumerDAO {
         try (Statement st = connection.createStatement();
              ResultSet rs = st.executeQuery(select)) {
             while (rs.next()) {
-                Costumer costumer = new Costumer();
-                costumer.setId(rs.getString("id"));
-                costumer.setNama(rs.getString("nama"));
-                costumer.setAlamat(rs.getString("alamat"));
-                costumer.setNomorHp(rs.getString("nomorHp"));
+            	Costumer costumer = new CostumerBuilder()
+						.setId(rs.getString("id"))
+						.setNama(rs.getString("nama"))
+						.setAlamat(rs.getString("alamat"))
+						.setNohp(rs.getString("nohp"))
+						.build();
                 costumers.add(costumer);
             }
         } catch (SQLException e) {
-            Logger.getLogger(CostumerRepo.class.getName()).log(Level.SEVERE, "Error fetching costumers", e);
+            Logger.getLogger(CostumerRepo.class.getName()).log(Level.SEVERE, null, e);
         }
         return costumers;
     }
 
     @Override
     public void update(Costumer costumer) {
-        String update = "UPDATE costumer SET nama = ?, alamat = ?, nomorHp = ? WHERE id = ?";
+        String update = "UPDATE costumer SET nama = ?, alamat = ?, noHp = ? WHERE id = ?";
         try (PreparedStatement st = connection.prepareStatement(update)) {
             st.setString(1, costumer.getNama());
             st.setString(2, costumer.getAlamat());
-            st.setString(3, costumer.getNomorHp());
+            st.setString(3, costumer.getNohp());
             st.setString(4, costumer.getId());
             st.executeUpdate();
         } catch (SQLException e) {
-            Logger.getLogger(CostumerRepo.class.getName()).log(Level.SEVERE, "Error updating costumer", e);
+            e.printStackTrace();
         }
     }
 
@@ -77,7 +79,12 @@ public class CostumerRepo implements CostumerDAO {
             st.setString(1, id);
             st.executeUpdate();
         } catch (SQLException e) {
-            Logger.getLogger(CostumerRepo.class.getName()).log(Level.SEVERE, "Error deleting costumer", e);
+            e.printStackTrace();
         }
     }
+
+    @Override
+    public void delete(int id) {
+        delete(String.valueOf(id));
+    }
 }
